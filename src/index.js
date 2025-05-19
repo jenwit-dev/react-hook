@@ -8,6 +8,8 @@ const TOKEN =
 
 function App() {
   const [keyword, setKeyword] = useState("");
+  const [movieLists, setMovieLists] = useState([]);
+  const [totalPage, setTotalPage] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +24,8 @@ function App() {
     try {
       const response = await fetch(url, option);
       const data = await response.json();
-      console.log(data);
+      setMovieLists(data.results);
+      setTotalPage(data.total_pages);
     } catch (err) {
       console.log(err);
     }
@@ -32,7 +35,7 @@ function App() {
     <div className="App">
       {/* Header */}
       <div className="header">
-        <h1>Movie App</h1>
+        <h1>Movie Search</h1>
       </div>
       {/* Input */}
       <form className="search" onSubmit={handleSubmit}>
@@ -44,10 +47,19 @@ function App() {
         />
         <button type="submit">search</button>
       </form>
+
+      <div>
+        {[...Array(totalPage).keys()].map((n) => (
+          <button>{n + 1}</button>
+        ))}
+      </div>
       {/* Result */}
       <div className="movie-lists">
-        <div className="movie">Movie 1</div>
-        <div className="movie">Movie 2</div>
+        {movieLists.map((movie) => (
+          <div className="movie" key={movie.id}>
+            {movie.name}
+          </div>
+        ))}
       </div>
     </div>
   );
