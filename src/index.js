@@ -5,6 +5,7 @@ import "./index.css";
 function App() {
   const [category, setCategory] = useState("");
   const [count, setCount] = useState(0);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     console.log("Effect Hook - Category");
@@ -14,13 +15,16 @@ function App() {
         const response = await fetch(`${BASE_URL}/${category}`, {
           method: "GET",
         });
-        const data = await response.json();
-        console.log(data);
+        const dataJSON = await response.json();
+        setData(dataJSON);
       } catch (err) {
         console.log(err);
       }
     }
     if (category) fetchLists();
+    return () => {
+      console.log("cleanup", category);
+    };
   }, [category]);
 
   console.log("render");
@@ -39,7 +43,11 @@ function App() {
       </div>
 
       <ul className="lists">
-        <li className="lists__item">item-1</li>
+        {data.map((obj) => (
+          <li className="lists__item" key={obj.id}>
+            {obj.body || obj.name || obj.title}
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -47,3 +55,4 @@ function App() {
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
+// https://github.com/pavitpim40/todolist-api-v2
